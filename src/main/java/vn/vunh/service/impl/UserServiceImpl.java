@@ -22,6 +22,7 @@ import vn.vunh.controller.request.UserPasswordRequest;
 import vn.vunh.controller.request.UserUpdateRequest;
 import vn.vunh.controller.response.UserPageResponse;
 import vn.vunh.controller.response.UserResponse;
+import vn.vunh.exception.InvalidDataException;
 import vn.vunh.exception.ResourceNotFoundException;
 import vn.vunh.model.AddressEntity;
 import vn.vunh.model.UserEntity;
@@ -115,6 +116,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public long save(UserCreationRequest req) {
         log.info("Saving user: {}", req);
+        UserEntity userByEmail = userRepository.findByEmail(req.getEmail());
+        if (userByEmail != null) {
+            throw new InvalidDataException("Email already exists");
+        }
         UserEntity user = new UserEntity();
         user.setFirstName(req.getFirstName());
         user.setLastName(req.getLastName());
