@@ -19,6 +19,7 @@ import vn.vunh.common.Gender;
 import vn.vunh.common.UserStatus;
 import vn.vunh.common.UserType;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -103,5 +104,15 @@ public class UserEntity extends AbstractEntity<Long> implements UserDetails, Ser
     @Override
     public boolean isEnabled() {
         return UserStatus.ACTIVE.equals(status);
+    }
+
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
     }
 }

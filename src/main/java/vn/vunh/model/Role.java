@@ -30,9 +30,6 @@ public class Role extends AbstractEntity<Integer> {
     @Column(name = "description")
     private String description;
 
-//    @OneToMany(mappedBy = "user")
-//    private Set<User> users;
-
     @OneToMany(mappedBy = "role")
     private Set<RoleHasPermission> roles = new HashSet<>();
 }

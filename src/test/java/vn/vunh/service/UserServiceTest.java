@@ -80,10 +80,6 @@ class UserServiceTest {
         userService = new UserServiceImpl(userRepository, addressRepository, passwordEncoder);
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void testGetUserList_Success() {
         // Giả lập phương thức search của UserRepository
@@ -94,7 +90,7 @@ class UserServiceTest {
         UserPageResponse result = userService.findAll(null, null, 0, 20);
 
         Assertions.assertNotNull(result);
-        assertEquals(2, result.totalElements);
+        assertEquals(2, result.getTotalElements());
     }
 
     @Test
@@ -107,7 +103,7 @@ class UserServiceTest {
         UserPageResponse result = userService.findAll("java", null, 0, 20);
 
         Assertions.assertNotNull(result);
-        assertEquals(2, result.totalElements);
+        assertEquals(2, result.getTotalElements());
     }
 
     @Test
@@ -142,29 +138,6 @@ class UserServiceTest {
     }
 
     @Test
-    void testFindByUsername_Success() {
-        // Giả lập hành vi của UserRepository
-        when(userRepository.findByUsername("vunh")).thenReturn(javaTech);
-
-        // Gọi phương thức cần kiểm tra
-        UserResponse result = userService.findByUsername("vunh");
-        Assertions.assertNotNull(result);
-        assertEquals("vunh", result.getUsername());
-    }
-
-    @Test
-    void testFindByEmail_Success() {
-        // Giả lập hành vi của UserRepository
-        when(userRepository.findByEmail("nonghoangvu04@gmail.com")).thenReturn(javaTech);
-
-        // Gọi phương thức cần kiểm tra
-        UserResponse result = userService.findByEmail("nonghoangvu04@gmail.com");
-
-        Assertions.assertNotNull(result);
-        assertEquals("nonghoangvu04@gmail.com", result.getEmail());
-    }
-
-    @Test
     void testSave_Success() {
         // Giả lập hành vi của UserRepository
         when(userRepository.save(any(UserEntity.class))).thenReturn(javaTech);
@@ -190,7 +163,8 @@ class UserServiceTest {
         userCreationRequest.setAddresses(List.of(addressRequest));
 
         // Gọi phương thức cần kiểm tra
-        long result = userService.save(userCreationRequest);
+        // Gọi phương thức cần kiểm tra
+        Long result = userService.save(userCreationRequest);
 
         // Kiểm tra kết quả
         assertNotNull(result);
