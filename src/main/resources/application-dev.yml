@@ -28,5 +28,9 @@ openapi:
     title: Backend service
     version: 1.0.0
 
+# Generate HMAC Authentication Code: https://www.devglan.com/online-tools/hmac-sha256-online
 jwt:
-  secretKey: abc@123
+  expiryMinutes: 60
+  expiryDay: 14
+  accessKey: f2lbQFu3wDo3chQA71xo3UNt2TI83ntHsfI/GqnDKNM=
+  refreshKey: 1K6mJcyMTWH7arbdTRAnQAx//1QiRnF3vae0MRptt0E=
