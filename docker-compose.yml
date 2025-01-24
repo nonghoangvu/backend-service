@@ -23,9 +23,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: nonghoangvu_password
       PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-      - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
+#    volumes:
+#      - postgres:/data/postgres
+#      - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5439:5432'
     networks:
