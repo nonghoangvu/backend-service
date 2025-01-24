@@ -131,11 +131,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword("DUMMY");
         user.setType(req.getType());
         user.setStatus(UserStatus.NONE);
-        userRepository.save(user);
+        UserEntity result = userRepository.save(user);
         log.info("Saved user: {}", user);
 
-        if (user.getId() != null) {
-            log.info("user id: {}", user.getId());
+        if (result.getId() != null) {
+            log.info("user id: {}", result.getId());
             List<AddressEntity> addresses = new ArrayList<>();
             req.getAddresses().forEach(address -> {
                 AddressEntity addressEntity = new AddressEntity();
@@ -147,14 +147,14 @@ public class UserServiceImpl implements UserService {
                 addressEntity.setCity(address.getCity());
                 addressEntity.setCountry(address.getCountry());
                 addressEntity.setAddressType(address.getAddressType());
-                addressEntity.setUserId(user.getId());
+                addressEntity.setUserId(result.getId());
                 addresses.add(addressEntity);
             });
             addressRepository.saveAll(addresses);
             log.info("Saved addresses: {}", addresses);
         }
 
-        return user.getId();
+        return result.getId();
     }
 
     @Override
