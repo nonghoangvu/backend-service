@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: 321
       PGDATA: /data/postgres
     volumes:
-#      - postgres:/data/postgres
+      - postgres:/data/postgres
       - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5431:5432'
@@ -85,9 +85,35 @@ services:
       networks:
         - default
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    environment: # account: grafana/password
+      - GF_SECURITY_ADMIN_USER=grafana
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    ports:
+      - '3000:3000'
+    links:
+      - prometheus
+    volumes:
+      - grafana:/var/lib/grafana
 networks:
   default:
     name: backend-service
 
 volumes:
-  mysql_data:
+#  mysql_data:
+  postgres:
+  grafana:
