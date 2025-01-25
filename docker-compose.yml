@@ -33,9 +33,11 @@ services:
 
   backend-service:
     container_name: backend-service
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: nonghoangvu/backend-service:20250125-dev
+#    platform: linux/amd64
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
