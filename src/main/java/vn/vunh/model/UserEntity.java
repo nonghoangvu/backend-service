@@ -45,7 +45,7 @@ public class UserEntity extends AbstractEntity<Long> implements UserDetails, Ser
     @Temporal(TemporalType.DATE)
     private Date birthday;
 
-    @Column(name = "email", length = 255)
+    @Column(name = "email", length = 255, unique = true)
     private String email;
 
     @Column(name = "phone", length = 15)

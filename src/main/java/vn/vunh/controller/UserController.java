@@ -62,7 +62,7 @@ public class UserController {
 
     @Operation(summary = "Create User", description = "API add new user to database")
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('admin')")
+//    @PreAuthorize("hasAuthority('admin')")
     public ApiResponse createUser(@RequestBody @Valid UserCreationRequest request) {
         log.info("Create User: {}", request);
 

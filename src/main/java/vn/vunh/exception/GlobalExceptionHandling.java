@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -258,6 +259,35 @@ public class GlobalExceptionHandling {
         errorResponse.setStatus(INTERNAL_SERVER_ERROR.value());
         errorResponse.setError(INTERNAL_SERVER_ERROR.getReasonPhrase());
         errorResponse.setMessage(e.getMessage());
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(
+                                    name = "500 Response",
+                                    summary = "Handle exception when internal server error",
+                                    value = """
+                                            {
+                                              "timestamp": "2023-10-19T06:35:52.333+00:00",
+                                              "status": 500,
+                                              "path": "/api/v1/...",
+                                              "error": "Internal Server Error",
+                                              "message": "Connection timeout, please try again"
+                                            }
+                                            """
+                            ))})
+    })
+    public ErrorResponse handleExceptionDataIntegrityViolationException(Exception e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(new Date());
+        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponse.setStatus(INTERNAL_SERVER_ERROR.value());
+        errorResponse.setError(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        errorResponse.setMessage("DataIntegrityViolationException");
 
         return errorResponse;
     }
