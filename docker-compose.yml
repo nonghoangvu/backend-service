@@ -33,7 +33,7 @@ services:
 
   backend-service:
     container_name: backend-service
-    image: nonghoangvu/backend-service:20250125-dev
+    image: nonghoangvu/backend-service:1.0.0-48
 #    platform: linux/amd64
 #    build:
 #      context: ./
