@@ -7,7 +7,9 @@
 package vn.vunh.config;
 
 import com.google.gson.Gson;
+import com.sendgrid.SendGrid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -74,5 +76,10 @@ public class AppConfig {
     @Bean
     public Gson gson() {
         return new Gson();
+    }
+
+    @Bean
+    public SendGrid sendGrid(@Value("${spring.sendgrid.apiKey}") String apiKey) {
+        return new SendGrid(apiKey);
     }
 }

@@ -15,7 +15,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-
+  sendgrid:
+    apiKey: ${SENDGRID_API_KEY:DUMMY-SENDGRID-API-KEY}
+    fromEmail: ${FROM_EMAIL:DUMMY-EMAIL}
+    templateId: ${TEMPLATE_ID:DUMMY-TEMPLATE-ID}
 # application-dev.yml
 springdoc:
   api-docs:
