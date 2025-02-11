@@ -14,11 +14,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   sendgrid:
     apiKey: ${SENDGRID_API_KEY:DUMMY-SENDGRID-API-KEY}
     fromEmail: ${FROM_EMAIL:DUMMY-EMAIL}
     templateId: ${TEMPLATE_ID:DUMMY-TEMPLATE-ID}
+  kafka:
+    bootstrap-servers: localhost:29092
 # application-dev.yml
 springdoc:
   api-docs:

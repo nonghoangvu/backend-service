@@ -158,6 +158,11 @@
 			<version>4.9.3</version>
 		</dependency>
 
+		<!-- Spring kafka -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 	</dependencies>
 
 	<profiles>

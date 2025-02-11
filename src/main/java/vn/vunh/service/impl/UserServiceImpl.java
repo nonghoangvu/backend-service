@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import vn.vunh.model.AddressEntity;
 import vn.vunh.model.UserEntity;
 import vn.vunh.repository.AddressRepository;
 import vn.vunh.repository.UserRepository;
+import vn.vunh.service.EmailService;
 import vn.vunh.service.UserService;
 
 import java.util.ArrayList;
@@ -43,6 +45,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final EmailService emailService;
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
@@ -63,7 +68,6 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        // Xu ly truong hop FE muon bat dau voi page = 1
         int pageNo = 0;
         if (page > 0) {
             pageNo = page - 1;
@@ -154,6 +158,7 @@ public class UserServiceImpl implements UserService {
             log.info("Saved addresses: {}", addresses);
         }
 
+        sendEmail(user.getEmail(), String.format("%s %s", user.getFirstName(), user.getLastName()));
         return result.getId();
     }
 
@@ -268,5 +273,14 @@ public class UserServiceImpl implements UserService {
         response.setUsers(userList);
 
         return response;
+    }
+
+    private void sendEmail(String to, String name) {
+        kafkaTemplate.send("send-email", String.format("to=%s,name=%s", to, name));
+        //try {
+        //    emailService.sendEmailWithTemplate(to, name);
+        //} catch (IOException e) {
+        //    log.error(e.getMessage());
+        //}
     }
 }

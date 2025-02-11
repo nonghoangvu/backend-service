@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import vn.vunh.common.Gender;
 import vn.vunh.common.UserStatus;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     private UserService userService;
+    private @Mock KafkaTemplate<String, String> kafkaTemplate;
+
+    private @Mock EmailService emailService;
 
     private @Mock UserRepository userRepository;
     private @Mock AddressRepository addressRepository;
@@ -77,7 +81,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         // Khởi tạo lớp triển khai của UserService
-        userService = new UserServiceImpl(userRepository, addressRepository, passwordEncoder);
+        userService = new UserServiceImpl(userRepository, addressRepository, passwordEncoder, kafkaTemplate, emailService);
     }
 
     @Test
