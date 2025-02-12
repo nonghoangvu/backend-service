@@ -22,6 +22,7 @@ import vn.vunh.exception.ResourceNotFoundException;
 import vn.vunh.model.UserEntity;
 import vn.vunh.repository.AddressRepository;
 import vn.vunh.repository.UserRepository;
+import vn.vunh.repository.elasticsearch.UserEntityDocumentRepository;
 import vn.vunh.service.impl.UserServiceImpl;
 
 import java.util.Date;
@@ -37,6 +38,9 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     private UserService userService;
+
+    private @Mock UserEntityDocumentRepository entityDocumentRepository;
+
     private @Mock KafkaTemplate<String, String> kafkaTemplate;
 
     private @Mock EmailService emailService;
@@ -81,7 +85,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         // Khởi tạo lớp triển khai của UserService
-        userService = new UserServiceImpl(userRepository, addressRepository, passwordEncoder, kafkaTemplate, emailService);
+        userService = new UserServiceImpl(userRepository, addressRepository, passwordEncoder, kafkaTemplate,entityDocumentRepository, emailService);
     }
 
     @Test

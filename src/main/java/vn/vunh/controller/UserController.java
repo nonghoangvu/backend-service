@@ -114,7 +114,15 @@ public class UserController {
         return ApiResponse.builder()
                 .status(HttpStatus.RESET_CONTENT.value())
                 .message("User deleted successfully")
-                .data("")
+                .build();
+    }
+
+    @GetMapping("/users-elasticsearch")
+    public ApiResponse getUsersElasticSearch() {
+        return ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get users elasticsearch")
+                .data(this.userService.findAll())
                 .build();
     }
 }

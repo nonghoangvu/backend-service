@@ -27,8 +27,10 @@ import vn.vunh.exception.InvalidDataException;
 import vn.vunh.exception.ResourceNotFoundException;
 import vn.vunh.model.AddressEntity;
 import vn.vunh.model.UserEntity;
+import vn.vunh.model.elasticsearch.UserEntityDocument;
 import vn.vunh.repository.AddressRepository;
 import vn.vunh.repository.UserRepository;
+import vn.vunh.repository.elasticsearch.UserEntityDocumentRepository;
 import vn.vunh.service.EmailService;
 import vn.vunh.service.UserService;
 
@@ -43,9 +45,14 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
     private final AddressRepository addressRepository;
+
     private final PasswordEncoder passwordEncoder;
+
     private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final UserEntityDocumentRepository entityDocumentRepository;
 
     private final EmailService emailService;
 
@@ -158,6 +165,19 @@ public class UserServiceImpl implements UserService {
             log.info("Saved addresses: {}", addresses);
         }
 
+        if (result.getId() != null) {
+            // save to elasticsearch
+            this.entityDocumentRepository.save(UserEntityDocument.builder()
+                    .fullName(String.format("%s %s", user.getLastName(), user.getFirstName()))
+                    .gender(user.getGender())
+                    .birthday(user.getBirthday())
+                    .username(user.getUsername())
+                    .phone(user.getPhone())
+                    .email(user.getEmail())
+                    .build());
+            log.info("Saved user to elasticsearch successfully");
+        }
+
         sendEmail(user.getEmail(), String.format("%s %s", user.getFirstName(), user.getLastName()));
         return result.getId();
     }
@@ -173,7 +193,6 @@ public class UserServiceImpl implements UserService {
         user.setLastName(req.getLastName());
         user.setGender(req.getGender());
         user.setBirthday(req.getBirthday());
-        user.setEmail(req.getEmail());
         user.setPhone(req.getPhone());
         user.setUsername(req.getUsername());
 
@@ -203,6 +222,22 @@ public class UserServiceImpl implements UserService {
 
         // save addresses
         addressRepository.saveAll(addresses);
+
+        // Save to elasticsearch
+        if(user.getId() != null) {
+            UserEntityDocument userDocument = this.getUserEntityDocumentByEmail(user.getEmail());
+            if(userDocument == null) {
+                userDocument = new UserEntityDocument();
+            }
+            userDocument.setFullName(String.format("%s %s", user.getLastName(), user.getFirstName()));
+            userDocument.setGender(user.getGender());
+            userDocument.setBirthday(user.getBirthday());
+            userDocument.setUsername(user.getUsername());
+            userDocument.setPhone(user.getPhone());
+            userDocument.setEmail(user.getEmail());
+            this.entityDocumentRepository.save(userDocument);
+            log.info("Updated user to elasticsearch successfully");
+        }
         log.info("Updated addresses: {}", addresses);
     }
 
@@ -229,7 +264,22 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatus.INACTIVE);
 
         userRepository.save(user);
+
+        if(user.getId() != null) {
+            UserEntityDocument userEntityDocumentByEmail = this.getUserEntityDocumentByEmail(user.getEmail());
+            log.info("Username = {} | Email = {} ", userEntityDocumentByEmail.getUsername(), userEntityDocumentByEmail.getEmail());
+            this.entityDocumentRepository.delete(userEntityDocumentByEmail);
+        }
+
         log.info("Deleted user id: {}", id);
+    }
+
+    @Override
+    public List<UserEntityDocument> findAll() {
+        List<UserEntityDocument> users = new ArrayList<>();
+        this.entityDocumentRepository.findAll().forEach(users::add);
+        System.out.println(users);
+        return users;
     }
 
     /**
@@ -240,6 +290,12 @@ public class UserServiceImpl implements UserService {
      */
     private UserEntity getUserEntity(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    private UserEntityDocument getUserEntityDocumentByEmail(String email) {
+        log.info("Finding user by email: {}", email);
+
+        return this.entityDocumentRepository.findUserEntityDocumentByEmail(email);
     }
 
     /**

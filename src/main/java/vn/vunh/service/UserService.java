@@ -11,6 +11,9 @@ import vn.vunh.controller.request.UserPasswordRequest;
 import vn.vunh.controller.request.UserUpdateRequest;
 import vn.vunh.controller.response.UserPageResponse;
 import vn.vunh.controller.response.UserResponse;
+import vn.vunh.model.elasticsearch.UserEntityDocument;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -29,4 +32,6 @@ public interface UserService {
     void changePassword(UserPasswordRequest req);
 
     void delete(Long id);
+
+    List<UserEntityDocument> findAll();
 }
