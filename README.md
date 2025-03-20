@@ -11,6 +11,7 @@ Start date: 23/01/2025
    Website: https://bit.ly/nong-hoang-vu-java
    Youtube: https://www.youtube.com/@javatech04
    Facebook: https://www.facebook.com/NongHoangVu04
+   Checkout branch to view more
 ```
 ## Prerequisite
 - Cài đặt JDK 17+
